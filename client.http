@@ -7,4 +7,9 @@ content-type: application/json
 
 ###
 
+GET http://localhost:8000/customers
+content-type: application/xml
+
+###
+
 POST http://localhost:8000
