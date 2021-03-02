@@ -3,17 +3,24 @@ package app
 import (
 	"log"
 	"net/http"
+
+	"github.com/alekssro/banking/domain"
+	"github.com/alekssro/banking/service"
+	"github.com/gorilla/mux"
 )
 
 // Start the web app
 func Start() {
-	mux := http.NewServeMux()
+	// mux := http.NewServeMux()
+	router := mux.NewRouter()
+
+	// wiring
+	ch := CustomerHandler{service: service.NewCustomerService(domain.NewCustomerRepositoryMock())}
 
 	// define routes
-	mux.HandleFunc("/greet", greet)
-	mux.HandleFunc("/customers", getAllCustomers)
+	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 
 	// starting server
-	log.Fatal(http.ListenAndServe("localhost:8000", mux))
+	log.Fatal(http.ListenAndServe("localhost:8000", router))
 
 }

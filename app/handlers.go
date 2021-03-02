@@ -5,6 +5,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+
+	"github.com/alekssro/banking/service"
+	"github.com/gorilla/mux"
 )
 
 // Customer struct to store customer data
@@ -14,15 +17,19 @@ type Customer struct {
 	Zipcode string `json:"zip_code" xml:"zipcode"`
 }
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello World!!")
+// CustomerHandler struct defines the customer handler
+// which depends on the service.CustomerService
+type CustomerHandler struct {
+	service service.CustomerService
 }
 
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers := []Customer{
-		{Name: "Rachel", City: "Alk", Zipcode: "28200"},
-		{Name: "Aleks", City: "Sanse", Zipcode: "28110"},
-	}
+func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	// customers := []Customer{
+	// 	{Name: "Rachel", City: "Alk", Zipcode: "28200"},
+	// 	{Name: "Aleks", City: "Sanse", Zipcode: "28110"},
+	// }
+
+	customers, _ := ch.service.GetAllCustomers()
 
 	// send response as xml if specified in Request Header
 	if r.Header.Get("Content-Type") == "application/xml" {
@@ -35,4 +42,14 @@ func getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
 
+}
+
+func getCustomer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Fprint(w, vars["customer_id"])
+}
+
+func createCustomer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Fprint(w, "Post Customer received: ", vars["customer_id"])
 }
