@@ -1,0 +1,33 @@
+version: '3'
+services:
+
+  banking:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    user: vscode
+    volumes:
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ..:/workspace:cached
+      # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
+      - /var/run/docker.sock:/var/run/docker.sock 
+    container_name: banking-dev
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+  # db container
+  mysql:
+    image: mysql:5.6.27
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ../db/initdb:/docker-entrypoint-initdb.d  
+    container_name: mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: codecamp
+      TZ: Europe/Madrid
+  
+volumes:
+  mysqldata:
+    driver: local
