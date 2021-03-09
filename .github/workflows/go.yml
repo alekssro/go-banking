@@ -22,7 +22,7 @@ jobs:
       run: go build -v ./main.go
       
     - name: Run main.go
-      run: timeout 5 go run ./main.go 
+      run: timeout 5 go run ./main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
 
     # - name: Test
     #   run: go test -v ./...
