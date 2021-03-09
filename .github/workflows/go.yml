@@ -1,4 +1,4 @@
-name: Go
+name: Go-Banking
 
 on:
   push:
@@ -20,6 +20,9 @@ jobs:
 
     - name: Build
       run: go build -v ./main.go
+      
+    - name: Run main.go
+      run: timeout 5 go run ./main.go 
 
     # - name: Test
     #   run: go test -v ./...
