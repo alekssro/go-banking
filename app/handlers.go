@@ -3,9 +3,11 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 
 	"github.com/alekssro/banking/service"
+	"github.com/gorilla/mux"
 )
 
 // Customer struct to store customer data
@@ -36,11 +38,26 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 		xml.NewEncoder(w).Encode(customers)
 	}
 
-	// send response as xml if specified in Request Header
+	// send response as json if specified in Request Header
 	if r.Header.Get("Content-Type") == "application/json" {
 		// Json writer
 		w.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(customers)
 	}
 
+}
+
+func (ch *CustomerHandler) getCustomer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["customer_id"]
+
+	customer, err := ch.service.GetCustomer(id)
+	if err != nil {
+		w.WriteHeader(err.Code)
+		fmt.Fprintln(w, err.Message)
+	} else {
+		// Json writer
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(customer)
+	}
 }

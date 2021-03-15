@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/alekssro/banking/errs"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -14,14 +15,14 @@ type CustomerRepositoryDB struct {
 	client *sql.DB
 }
 
-// FindAll implements a CustomRepository interface for
+// FindAll method implements a CustomRepository interface for
 // CustomerRepositoryDB struct. Returns all the customers
 // in CustomerRepositoryDB
 func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
 
-	findAll_query := "select customer_id, name, date_of_birth, city, zipcode, status from customers"
+	findAllQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers"
 
-	rows, err := d.client.Query(findAll_query)
+	rows, err := d.client.Query(findAllQuery)
 	if err != nil {
 		log.Println("Error while logging into DB.", err.Error())
 		return nil, err
@@ -39,6 +40,29 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
 	}
 
 	return customers, nil
+}
+
+// ByID method implements CustomRepository interface for CustomerRepositoryDB
+// struct. Returns a Customer given an ID.
+func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
+	cutomerQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers where customer_id = ?"
+
+	// Looking for one row
+	row := d.client.QueryRow(cutomerQuery, id)
+
+	// Error handling
+	var c Customer
+	err := row.Scan(&c.ID, &c.Name, &c.DateofBirth, &c.City, &c.Zipcode, &c.Status)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("Customer not found")
+		} else {
+			log.Println("Error while scanning customer in DB")
+			return nil, errs.NewUnexpectedError("unexpected database error")
+		}
+	}
+
+	return &c, nil
 }
 
 // NewCustomerRepositoryDB func implements adding a new
