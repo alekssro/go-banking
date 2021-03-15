@@ -38,9 +38,12 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 		xml.NewEncoder(w).Encode(customers)
 	}
 
-	// Json writer
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(customers)
+	// send response as xml if specified in Request Header
+	if r.Header.Get("Content-Type") == "application/json" {
+		// Json writer
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(customers)
+	}
 
 }
 
