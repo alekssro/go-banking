@@ -3,11 +3,9 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 
 	"github.com/alekssro/banking/service"
-	"github.com/gorilla/mux"
 )
 
 // Customer struct to store customer data
@@ -45,14 +43,4 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 		json.NewEncoder(w).Encode(customers)
 	}
 
-}
-
-func getCustomer(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fmt.Fprint(w, vars["customer_id"])
-}
-
-func createCustomer(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fmt.Fprint(w, "Post Customer received: ", vars["customer_id"])
 }
