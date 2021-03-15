@@ -11,11 +11,11 @@ import (
 
 // Start the web app
 func Start() {
+
 	// mux := http.NewServeMux()
 	router := mux.NewRouter()
 
 	// wiring
-	// ch := CustomerHandler{service: service.NewCustomerService(domain.NewCustomerRepositoryMock())}
 	ch := CustomerHandler{service: service.NewCustomerService(domain.NewCustomerRepositoryDB())}
 
 	// define routes
