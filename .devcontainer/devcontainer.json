@@ -17,7 +17,8 @@
 		"golang.Go",
 		"humao.rest-client",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-mysql"
+		"mtxr.sqltools-driver-mysql",
+		"eamodio.gitlens"
 	],
 
 	"remoteUser": "vscode"

@@ -1,5 +1,7 @@
 package domain
 
+import "github.com/alekssro/banking/errs"
+
 // Customer struct defines the customer
 type Customer struct {
 	ID          string
@@ -12,5 +14,7 @@ type Customer struct {
 
 // CustomerRepository interface
 type CustomerRepository interface {
-	FindAll() ([]Customer, error)
+	FindAll() ([]Customer, *errs.AppError)
+	FindByStatus(string) ([]Customer, *errs.AppError)
+	ByID(string) (*Customer, *errs.AppError)
 }
