@@ -8,6 +8,7 @@ import (
 // CustomerService defines a CustomerService interface
 type CustomerService interface {
 	GetAllCustomers() ([]domain.Customer, *errs.AppError)
+	GetAllByStatus(string) ([]domain.Customer, *errs.AppError)
 	GetCustomer(string) (*domain.Customer, *errs.AppError)
 }
 
@@ -21,6 +22,18 @@ type DefaultCustomerService struct {
 // DefaultCustomerService struct
 func (s DefaultCustomerService) GetAllCustomers() ([]domain.Customer, *errs.AppError) {
 	return s.repo.FindAll()
+}
+
+// GetAllByStatus method implements the CustomerService interface for the
+// DefaultCustomerService struct. It returns the customers which has a correspondant status
+func (s DefaultCustomerService) GetAllByStatus(status string) ([]domain.Customer, *errs.AppError) {
+	// Translate to Repository vocabulary
+	if status == "active" {
+		status = "1"
+	} else if status == "inactive" {
+		status = "0"
+	}
+	return s.repo.FindByStatus(status)
 }
 
 // GetCustomer method implements the CustomerService insterface for the

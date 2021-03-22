@@ -14,6 +14,19 @@ type CustomerHandler struct {
 	service service.CustomerService
 }
 
+func (ch *CustomerHandler) queryCustomers(w http.ResponseWriter, r *http.Request) {
+	url := r.URL
+	query := url.Query()
+	status := query.Get("status")
+
+	if status == "" {
+		ch.getAllCustomers(w, r)
+	} else {
+		ch.getAllByStatus(w, r)
+	}
+
+}
+
 func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 
 	customers, err := ch.service.GetAllCustomers()
@@ -21,6 +34,18 @@ func (ch *CustomerHandler) getAllCustomers(w http.ResponseWriter, r *http.Reques
 		writeResponse(w, err.Code, err.AsMessage())
 	} else {
 		// Json writer
+		writeResponse(w, http.StatusOK, customers)
+	}
+}
+
+func (ch *CustomerHandler) getAllByStatus(w http.ResponseWriter, r *http.Request) {
+
+	status := r.URL.Query().Get("status")
+
+	customers, err := ch.service.GetAllByStatus(status)
+	if err != nil {
+		writeResponse(w, err.Code, err.AsMessage())
+	} else {
 		writeResponse(w, http.StatusOK, customers)
 	}
 }

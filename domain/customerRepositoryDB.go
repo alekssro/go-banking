@@ -46,6 +46,39 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 	return customers, nil
 }
 
+func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.AppError) {
+
+	if status != "1" && status != "0" {
+		return nil, errs.NewBadRequestError("malformed query, status=" + status)
+	}
+
+	findByStatusQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers where status = ?"
+
+	// Query by condition
+	rows, err := d.client.Query(findByStatusQuery, status)
+	if err != nil {
+		// log.Println("Error while logging into DB.", err.Error())
+		return nil, errs.NewUnexpectedError("Error while logging into DB.")
+	}
+
+	var customers []Customer
+	for rows.Next() {
+		var c Customer
+		err := rows.Scan(&c.ID, &c.Name, &c.DateofBirth, &c.City, &c.Zipcode, &c.Status)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, errs.NewNotFoundError("Customer not found")
+			} else {
+				// log.Println("Error while scanning customer in DB")
+				return nil, errs.NewUnexpectedError("Unexpected database error")
+			}
+		}
+		customers = append(customers, c)
+	}
+
+	return customers, nil
+}
+
 // ByID method implements CustomRepository interface for CustomerRepositoryDB
 // struct. Returns a Customer given an ID.
 func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
