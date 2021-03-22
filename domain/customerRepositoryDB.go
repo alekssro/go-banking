@@ -18,14 +18,14 @@ type CustomerRepositoryDB struct {
 // FindAll method implements a CustomRepository interface for
 // CustomerRepositoryDB struct. Returns all the customers
 // in CustomerRepositoryDB
-func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
+func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 
 	findAllQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers"
 
 	rows, err := d.client.Query(findAllQuery)
 	if err != nil {
-		log.Println("Error while logging into DB.", err.Error())
-		return nil, err
+		// log.Println("Error while logging into DB.", err.Error())
+		return nil, errs.NewUnexpectedError("Error while logging into DB.")
 	}
 
 	var customers []Customer
@@ -33,8 +33,12 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
 		var c Customer
 		err := rows.Scan(&c.ID, &c.Name, &c.DateofBirth, &c.City, &c.Zipcode, &c.Status)
 		if err != nil {
-			log.Println("Error while scanning customer in DB.", err.Error())
-			return nil, err
+			if err == sql.ErrNoRows {
+				return nil, errs.NewNotFoundError("Customer not found")
+			} else {
+				// log.Println("Error while scanning customer in DB")
+				return nil, errs.NewUnexpectedError("Unexpected database error")
+			}
 		}
 		customers = append(customers, c)
 	}
