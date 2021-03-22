@@ -7,18 +7,21 @@ content-type: application/json
 
 ###
 
-GET http://localhost:3000/customers
-content-type: application/xml
+# Not in DB
+GET http://localhost:3000/customers/1002
 
 ###
 
-GET http://localhost:3000/customers/96
-content-type: application/xml
+GET http://localhost:3000/customers/2005
 
 ###
 
-POST http://localhost:3000
+GET http://localhost:3000/customers?status=active
 
 ###
 
-POST http://localhost:3000/customers/alekssro
+GET http://localhost:3000/customers?status=inactive
+
+###
+
+GET http://localhost:3000/customers?status=13edrws
