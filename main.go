@@ -1,8 +1,11 @@
 package main
 
-import "github.com/alekssro/banking/app"
+import (
+	"github.com/alekssro/banking/app"
+	"github.com/alekssro/banking/logger"
+)
 
 func main() {
-	println("Banking server listening...")
+	logger.Info("Banking server listening...")
 	app.Start()
 }

@@ -2,10 +2,10 @@ package domain
 
 import (
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/alekssro/banking/errs"
+	"github.com/alekssro/banking/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -24,7 +24,7 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 
 	rows, err := d.client.Query(findAllQuery)
 	if err != nil {
-		// log.Println("Error while logging into DB.", err.Error())
+		logger.Error("Error while logging into DB." + err.Error())
 		return nil, errs.NewUnexpectedError("Error while logging into DB.")
 	}
 
@@ -36,7 +36,7 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 			if err == sql.ErrNoRows {
 				return nil, errs.NewNotFoundError("Customer not found")
 			} else {
-				// log.Println("Error while scanning customer in DB")
+				logger.Error("Error while scanning customer in DB")
 				return nil, errs.NewUnexpectedError("Unexpected database error")
 			}
 		}
@@ -59,7 +59,7 @@ func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.App
 	// Query by condition
 	rows, err := d.client.Query(findByStatusQuery, status)
 	if err != nil {
-		// log.Println("Error while logging into DB.", err.Error())
+		logger.Error("Error while logging into DB." + err.Error())
 		return nil, errs.NewUnexpectedError("Error while logging into DB.")
 	}
 
@@ -71,7 +71,7 @@ func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.App
 			if err == sql.ErrNoRows {
 				return nil, errs.NewNotFoundError("Customer not found")
 			} else {
-				// log.Println("Error while scanning customer in DB")
+				logger.Error("Error while scanning customer in DB")
 				return nil, errs.NewUnexpectedError("Unexpected database error")
 			}
 		}
@@ -96,7 +96,7 @@ func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
 		if err == sql.ErrNoRows {
 			return nil, errs.NewNotFoundError("Customer not found")
 		} else {
-			log.Println("Error while scanning customer in DB")
+			logger.Error("Error while scanning customer in DB")
 			return nil, errs.NewUnexpectedError("unexpected database error")
 		}
 	}
