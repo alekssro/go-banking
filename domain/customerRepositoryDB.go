@@ -46,6 +46,8 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 	return customers, nil
 }
 
+// FindByStatus method implements finding all the customers with a given status
+// for the CustomerRepositoryDB
 func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.AppError) {
 
 	if status != "1" && status != "0" {
