@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/alekssro/banking/errs"
@@ -74,7 +76,14 @@ func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
 // NewCustomerRepositoryDB func implements adding a new
 // CustomerRepositoryDB client
 func NewCustomerRepositoryDB() CustomerRepositoryDB {
-	client, err := sqlx.Open("mysql", "root:codecamp@tcp(mysql-dev:3306)/banking")
+	user := os.Getenv("DB_USER")
+	pass := os.Getenv("DB_PASS")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	name := os.Getenv("DB_NAME")
+	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, name)
+
+	client, err := sqlx.Open("mysql", url)
 	if err != nil {
 		panic(err)
 	}

@@ -2,17 +2,17 @@ GET http://localhost:3000/greet
 
 ###
 
-GET http://localhost:3000/customers
+GET http://localhost:8765/customers
 content-type: application/json
 
 ###
 
 # Not in DB
-GET http://localhost:3000/customers/1002
+GET http://localhost:3000/customers/1001
 
 ###
 
-GET http://localhost:3000/customers/2005
+GET http://localhost:3000/customers/2001
 
 ###
 
