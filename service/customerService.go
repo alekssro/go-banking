@@ -2,14 +2,15 @@ package service
 
 import (
 	"github.com/alekssro/banking/domain"
+	"github.com/alekssro/banking/dto"
 	"github.com/alekssro/banking/errs"
 )
 
 // CustomerService defines a CustomerService interface
 type CustomerService interface {
-	GetAllCustomers() ([]domain.Customer, *errs.AppError)
-	GetAllByStatus(string) ([]domain.Customer, *errs.AppError)
-	GetCustomer(string) (*domain.Customer, *errs.AppError)
+	GetAllCustomers() ([]dto.CustomerResponse, *errs.AppError)
+	GetAllByStatus(string) ([]dto.CustomerResponse, *errs.AppError)
+	GetCustomer(string) (*dto.CustomerResponse, *errs.AppError)
 }
 
 // DefaultCustomerService struct defines the default customer service
@@ -20,26 +21,54 @@ type DefaultCustomerService struct {
 
 // GetAllCustomers method implements the CustomerService interface for
 // DefaultCustomerService struct
-func (s DefaultCustomerService) GetAllCustomers() ([]domain.Customer, *errs.AppError) {
-	return s.repo.FindAll()
+func (s DefaultCustomerService) GetAllCustomers() ([]dto.CustomerResponse, *errs.AppError) {
+	cs, err := s.repo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	response := []dto.CustomerResponse{}
+	for _, c := range cs {
+		response = append(response, c.ToDTO())
+	}
+
+	return response, nil
 }
 
 // GetAllByStatus method implements the CustomerService interface for the
 // DefaultCustomerService struct. It returns the customers which has a correspondant status
-func (s DefaultCustomerService) GetAllByStatus(status string) ([]domain.Customer, *errs.AppError) {
+func (s DefaultCustomerService) GetAllByStatus(status string) ([]dto.CustomerResponse, *errs.AppError) {
 	// Translate to Repository vocabulary
 	if status == "active" {
 		status = "1"
 	} else if status == "inactive" {
 		status = "0"
 	}
-	return s.repo.FindByStatus(status)
+
+	cs, err := s.repo.FindByStatus(status)
+	if err != nil {
+		return nil, err
+	}
+
+	response := []dto.CustomerResponse{}
+	for _, c := range cs {
+		response = append(response, c.ToDTO())
+	}
+
+	return response, nil
 }
 
 // GetCustomer method implements the CustomerService insterface for the
 // DefaultCustomerService struct
-func (s DefaultCustomerService) GetCustomer(id string) (*domain.Customer, *errs.AppError) {
-	return s.repo.ByID(id)
+func (s DefaultCustomerService) GetCustomer(id string) (*dto.CustomerResponse, *errs.AppError) {
+	c, err := s.repo.ByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := c.ToDTO()
+
+	return &response, nil
 }
 
 // NewCustomerService func adds a new default customer service
