@@ -1,10 +1,6 @@
 package domain
 
 import (
-	"fmt"
-	"os"
-	"time"
-
 	"github.com/alekssro/banking/errs"
 	"github.com/alekssro/banking/logger"
 	_ "github.com/go-sql-driver/mysql"
@@ -75,21 +71,6 @@ func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
 
 // NewCustomerRepositoryDB func implements adding a new
 // CustomerRepositoryDB client
-func NewCustomerRepositoryDB() CustomerRepositoryDB {
-	user := os.Getenv("DB_USER")
-	pass := os.Getenv("DB_PASS")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	name := os.Getenv("DB_NAME")
-	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, name)
-
-	client, err := sqlx.Open("mysql", url)
-	if err != nil {
-		panic(err)
-	}
-
-	client.SetConnMaxLifetime(time.Minute * 3)
-	client.SetMaxOpenConns(10)
-	client.SetMaxIdleConns(10)
-	return CustomerRepositoryDB{client: client}
+func NewCustomerRepositoryDB(dbClient *sqlx.DB) CustomerRepositoryDB {
+	return CustomerRepositoryDB{client: dbClient}
 }
