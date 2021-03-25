@@ -1,10 +1,13 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/alekssro/banking/dto"
 	"github.com/alekssro/banking/service"
+	"github.com/gorilla/mux"
 )
 
 // AccountHandler struct defines the account handler
@@ -14,10 +17,21 @@ type AccountHandler struct {
 }
 
 func (ah *AccountHandler) createAccount(w http.ResponseWriter, r *http.Request) {
-	url := r.URL
-	query := url.Query()
+	vars := mux.Vars(r)
+	customerID := vars["customer_id"]
 
-	// TODO: Implement account creation
-	fmt.Println(query)
-
+	var request dto.NewAccountRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		writeResponse(w, http.StatusBadRequest, err.Error())
+	} else {
+		request.CustomerId = customerID
+		account, appErr := ah.service.NewAccount(request)
+		if appErr != nil {
+			writeResponse(w, appErr.Code, appErr.Message)
+		} else {
+			fmt.Println(account)
+			writeResponse(w, http.StatusCreated, account)
+		}
+	}
 }

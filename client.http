@@ -25,3 +25,13 @@ GET http://localhost:3000/customers?status=inactive
 ###
 
 GET http://localhost:3000/customers?status=13edrws
+
+###
+
+POST http://localhost:3000/customers/2001/account
+content-type: application/json
+
+{
+    "account_type": "savinsg",
+    "amount": 5000.2
+}
