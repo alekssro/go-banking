@@ -21,8 +21,7 @@ func (r NewTransactionRequest) Validate() *errs.AppError {
 		logger.Error("Transaction amount is negative: " + fmt.Sprintf("%f", r.Amount))
 		return errs.NewBadRequestError("Negative transaction amount")
 	}
-	// TODO: withdrawal amount should de available in the account
-	//
+	// TODO: check valid transaction_type here
 
 	return nil
 }
