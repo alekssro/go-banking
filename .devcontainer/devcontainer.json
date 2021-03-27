@@ -18,7 +18,9 @@
 		"humao.rest-client",
 		"mtxr.sqltools",
 		"mtxr.sqltools-driver-mysql",
-		"eamodio.gitlens"
+		"eamodio.gitlens",
+		"yzhang.markdown-all-in-one",
+		"gruntfuggly.todo-tree"
 	],
 
 	"remoteUser": "vscode"
