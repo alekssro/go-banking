@@ -96,7 +96,6 @@ func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.App
 		logger.Error("Error while updating account amount: " + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
-	logger.Info("Updated account")
 	t.AccountBalance = newBalance
 
 	return &t, nil
