@@ -36,6 +36,8 @@ func (s DefaultTransactionService) NewTransaction(req dto.NewTransactionRequest)
 		TransactionDate: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
+	// TODO: Use account method in this service to check if we can withdraw account.CanWithdraw
+
 	if t.TransactionType == "withdrawal" {
 		newTransaction, err := s.repo.Withdrawal(t)
 		if err != nil {
