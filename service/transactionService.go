@@ -29,7 +29,6 @@ func (s DefaultTransactionService) NewTransaction(req dto.NewTransactionRequest)
 	}
 
 	t := domain.Transaction{
-		TransactionID:   "",
 		AccountID:       req.AccountID,
 		Amount:          req.Amount,
 		TransactionType: req.TransactionType,

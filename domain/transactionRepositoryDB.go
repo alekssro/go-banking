@@ -28,21 +28,14 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 		logger.Error("Error while getting account amount" + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
-	if a.Amount < t.Amount {
+	if !a.CanWithdraw(t.Amount) {
 		return nil, errs.NewUnexpectedError("Insufficient funds to make transaction")
 	}
 
 	// 2. Insert transaction into transactions
-	insertTransactionQuery := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) VALUES (?, ?, ?, ?)"
-	res, err := d.client.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
-	if err != nil {
-		logger.Error("Error while inserting account entry: " + err.Error())
-		return nil, errs.NewUnexpectedError("unexpected database error")
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		logger.Error("Error while retrieving last inserted id: " + err.Error())
-		return nil, errs.NewUnexpectedError("unexpected database error")
+	id, inserr := insertTransaction(d, t)
+	if inserr != nil {
+		return nil, inserr
 	}
 	t.TransactionID = strconv.FormatInt(id, 10)
 
@@ -75,16 +68,9 @@ func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.App
 	}
 
 	// 2. Insert transaction into transactions
-	insertTransactionQuery := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) VALUES (?, ?, ?, ?)"
-	res, err := d.client.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
-	if err != nil {
-		logger.Error("Error while inserting account entry: " + err.Error())
-		return nil, errs.NewUnexpectedError("unexpected database error")
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		logger.Error("Error while retrieving last inserted id: " + err.Error())
-		return nil, errs.NewUnexpectedError("unexpected database error")
+	id, inserr := insertTransaction(d, t)
+	if inserr != nil {
+		return nil, inserr
 	}
 	t.TransactionID = strconv.FormatInt(id, 10)
 
@@ -99,6 +85,21 @@ func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.App
 	t.AccountBalance = newBalance
 
 	return &t, nil
+}
+
+func insertTransaction(d TransactionRepositoryDB, t Transaction) (int64, *errs.AppError) {
+	insertTransactionQuery := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) VALUES (?, ?, ?, ?)"
+	res, err := d.client.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+	if err != nil {
+		logger.Error("Error while inserting account entry: " + err.Error())
+		return -1, errs.NewUnexpectedError("unexpected database error")
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		logger.Error("Error while retrieving last inserted id: " + err.Error())
+		return -1, errs.NewUnexpectedError("unexpected database error")
+	}
+	return id, nil
 }
 
 // NewTransactionRepositoryDB func implements adding a new
