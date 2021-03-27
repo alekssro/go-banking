@@ -2,10 +2,10 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/alekssro/banking/dto"
+	"github.com/alekssro/banking/logger"
 	"github.com/alekssro/banking/service"
 	"github.com/gorilla/mux"
 )
@@ -30,12 +30,11 @@ func (th *TransactionHandler) newTransaction(w http.ResponseWriter, r *http.Requ
 	} else {
 		request.CustomerId = customerID
 		request.AccountID = accountID
-
 		Transaction, appErr := th.service.NewTransaction(request)
 		if appErr != nil {
 			writeResponse(w, appErr.Code, appErr.Message)
 		} else {
-			fmt.Println(Transaction)
+			logger.Info("New transaction: id=" + Transaction.TransactionId)
 			writeResponse(w, http.StatusCreated, Transaction)
 		}
 	}

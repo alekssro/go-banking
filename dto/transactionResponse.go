@@ -2,6 +2,6 @@ package dto
 
 // Transaction struct defines the Transaction for API response
 type NewTransactionResponse struct {
-	TransactionId string  `json:"transaction_id"`
-	AccountAmount float64 `json:"balance"`
+	TransactionId  string  `json:"transaction_id"`
+	AccountBalance float64 `json:"balance"`
 }

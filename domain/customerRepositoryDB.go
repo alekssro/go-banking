@@ -37,6 +37,7 @@ func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.App
 
 	findByStatusQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers where status = ?"
 
+	// check valid status in service
 	if status != "1" && status != "0" {
 		return nil, errs.NewBadRequestError("malformed query, status=" + status)
 	}

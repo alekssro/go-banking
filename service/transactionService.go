@@ -35,13 +35,27 @@ func (s DefaultTransactionService) NewTransaction(req dto.NewTransactionRequest)
 		TransactionType: req.TransactionType,
 		TransactionDate: time.Now().Format("2006-01-02 15:04:05"),
 	}
-	newTransaction, err := s.repo.Transaction(t)
-	if err != nil {
-		return nil, err
-	}
-	response := newTransaction.ToTransactionDTO()
 
-	return &response, nil
+	if t.TransactionType == "withdrawal" {
+		newTransaction, err := s.repo.Withdrawal(t)
+		if err != nil {
+			return nil, err
+		}
+		response := newTransaction.ToTransactionDTO()
+		return &response, nil
+
+	} else if t.TransactionType == "deposit" {
+		newTransaction, err := s.repo.Deposit(t)
+		if err != nil {
+			return nil, err
+		}
+		response := newTransaction.ToTransactionDTO()
+		return &response, nil
+
+	} else {
+		return nil, errs.NewValidationError("Invalid transaction type: " + t.TransactionType)
+	}
+
 }
 
 // NewTransactionService func adds a new default Transaction service

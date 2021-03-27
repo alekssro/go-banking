@@ -48,7 +48,7 @@ func Start() {
 	router.HandleFunc("/customers", ch.queryCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.createAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/transaction/{account_id:[0-9]+}", th.newTransaction).Methods(http.MethodPost)
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", th.newTransaction).Methods(http.MethodPost)
 
 	// starting server
 	host := os.Getenv("BANKING_HOST")

@@ -2,10 +2,10 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/alekssro/banking/dto"
+	"github.com/alekssro/banking/logger"
 	"github.com/alekssro/banking/service"
 	"github.com/gorilla/mux"
 )
@@ -30,7 +30,7 @@ func (ah *AccountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 		if appErr != nil {
 			writeResponse(w, appErr.Code, appErr.Message)
 		} else {
-			fmt.Println(account)
+			logger.Info("New created account: id=" + account.AccountId)
 			writeResponse(w, http.StatusCreated, account)
 		}
 	}
