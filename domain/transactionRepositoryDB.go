@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"database/sql"
 	"strconv"
 
 	"github.com/alekssro/banking/errs"
@@ -19,11 +20,17 @@ type TransactionRepositoryDB struct {
 // in TransactionRepositoryDB
 func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.AppError) {
 
+	tx, err := d.client.Begin()
+	if err != nil {
+		logger.Error("Error while starting a new transaction block: " + err.Error())
+		return nil, errs.NewUnexpectedError("unexpected database error")
+	}
+
 	var a Account
 
 	// 1. Check if available amount in account
 	accountAmountQuery := "SELECT amount FROM accounts WHERE account_id = ?"
-	err := d.client.Get(&a.Amount, accountAmountQuery, t.AccountID)
+	err = d.client.Get(&a.Amount, accountAmountQuery, t.AccountID)
 	if err != nil {
 		logger.Error("Error while getting account amount" + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
@@ -33,8 +40,9 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 	}
 
 	// 2. Insert transaction into transactions
-	id, inserr := insertTransaction(d, t)
+	id, inserr := insertTransaction(tx, t)
 	if inserr != nil {
+		tx.Rollback()
 		return nil, inserr
 	}
 	t.TransactionID = strconv.FormatInt(id, 10)
@@ -42,12 +50,19 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 	// 3. Update account amount
 	updateAccountQuery := "UPDATE accounts SET amount = ? WHERE account_id = ?"
 	newBalance := a.Amount - t.Amount
-	_, err = d.client.Exec(updateAccountQuery, newBalance, t.AccountID)
+	_, err = tx.Exec(updateAccountQuery, newBalance, t.AccountID)
 	if err != nil {
+		tx.Rollback()
 		logger.Error("Error while updating account amount: " + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
 	t.AccountBalance = newBalance
+
+	err = tx.Commit()
+	if err != nil {
+		logger.Error("Error while inserting account entry: " + err.Error())
+		return nil, errs.NewUnexpectedError("unexpected database error")
+	}
 
 	return &t, nil
 }
@@ -57,39 +72,52 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 // in TransactionRepositoryDB
 func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.AppError) {
 
+	tx, err := d.client.Begin()
+	if err != nil {
+		logger.Error("Error while starting a new transaction block: " + err.Error())
+		return nil, errs.NewUnexpectedError("unexpected database error")
+	}
 	var a Account
 
 	// 1. Get amount in account
 	accountAmountQuery := "SELECT amount FROM accounts WHERE account_id = ?"
-	err := d.client.Get(&a.Amount, accountAmountQuery, t.AccountID)
+	err = d.client.Get(&a.Amount, accountAmountQuery, t.AccountID)
 	if err != nil {
 		logger.Error("Error while getting account amount" + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
 
 	// 2. Insert transaction into transactions
-	id, inserr := insertTransaction(d, t)
+	id, inserr := insertTransaction(tx, t)
 	if inserr != nil {
+		tx.Rollback()
 		return nil, inserr
 	}
 	t.TransactionID = strconv.FormatInt(id, 10)
 
-	// 2. Update account amount
+	// 3. Update account amount
 	updateAccountQuery := "UPDATE accounts SET amount = ? WHERE account_id = ?"
 	newBalance := a.Amount + t.Amount
-	_, err = d.client.Exec(updateAccountQuery, newBalance, t.AccountID)
+	_, err = tx.Exec(updateAccountQuery, newBalance, t.AccountID)
 	if err != nil {
+		tx.Rollback()
 		logger.Error("Error while updating account amount: " + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
 	t.AccountBalance = newBalance
 
+	err = tx.Commit()
+	if err != nil {
+		logger.Error("Error while inserting account entry: " + err.Error())
+		return nil, errs.NewUnexpectedError("unexpected database error")
+	}
+
 	return &t, nil
 }
 
-func insertTransaction(d TransactionRepositoryDB, t Transaction) (int64, *errs.AppError) {
+func insertTransaction(tx *sql.Tx, t Transaction) (int64, *errs.AppError) {
 	insertTransactionQuery := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) VALUES (?, ?, ?, ?)"
-	res, err := d.client.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
+	res, err := tx.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
 	if err != nil {
 		logger.Error("Error while inserting account entry: " + err.Error())
 		return -1, errs.NewUnexpectedError("unexpected database error")
