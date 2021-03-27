@@ -37,6 +37,21 @@ func (d AccountRepositoryDB) Save(a Account) (*Account, *errs.AppError) {
 	return &a, nil
 }
 
+func (d AccountRepositoryDB) FindByID(accountID string) (*Account, *errs.AppError) {
+	// Check if available amount in account
+	accountQuery := "SELECT account_id, customer_id, opening_date, account_type, amount, status FROM customers WHERE customer_id = ?"
+
+	var a Account
+	// Query by id + Marshall into c
+	err := d.client.Get(&a, accountQuery, accountID)
+	if err != nil {
+		logger.Error("Error while querying customer by id in DB. " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected database error")
+	}
+
+	return &a, nil
+}
+
 // NewAccountRepositoryDB func implements adding a new
 // AccountRepositoryDB client
 func NewAccountRepositoryDB(dbClient *sqlx.DB) AccountRepositoryDB {

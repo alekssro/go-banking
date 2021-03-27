@@ -21,7 +21,9 @@ func (r NewTransactionRequest) Validate() *errs.AppError {
 		logger.Error("Transaction amount is negative: " + fmt.Sprintf("%f", r.Amount))
 		return errs.NewBadRequestError("Negative transaction amount")
 	}
-	// TODO: check valid transaction_type here
+	if r.TransactionType != "withdrawal" && r.TransactionType != "deposit" {
+		return errs.NewValidationError("Invalid transaction type: " + r.TransactionType)
+	}
 
 	return nil
 }

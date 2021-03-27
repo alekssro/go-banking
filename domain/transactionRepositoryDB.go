@@ -21,7 +21,6 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 
 	var a Account
 
-	// TODO: Move check to func and call from service (is independent of the repository)
 	// 1. Check if available amount in account
 	accountAmountQuery := "SELECT amount FROM accounts WHERE account_id = ?"
 	err := d.client.Get(&a.Amount, accountAmountQuery, t.AccountID)
