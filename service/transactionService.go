@@ -36,8 +36,6 @@ func (s DefaultTransactionService) NewTransaction(req dto.NewTransactionRequest)
 		TransactionDate: time.Now().Format("2006-01-02 15:04:05"),
 	}
 
-	// TODO: Use account method in this service to check if we can withdraw account.CanWithdraw
-
 	if t.TransactionType == "withdrawal" {
 		newTransaction, err := s.repo.Withdrawal(t)
 		if err != nil {
@@ -45,18 +43,14 @@ func (s DefaultTransactionService) NewTransaction(req dto.NewTransactionRequest)
 		}
 		response := newTransaction.ToTransactionDTO()
 		return &response, nil
-
-	} else if t.TransactionType == "deposit" {
-		newTransaction, err := s.repo.Deposit(t)
-		if err != nil {
-			return nil, err
-		}
-		response := newTransaction.ToTransactionDTO()
-		return &response, nil
-
-	} else {
-		return nil, errs.NewValidationError("Invalid transaction type: " + t.TransactionType)
 	}
+	// deposit
+	newTransaction, err := s.repo.Deposit(t)
+	if err != nil {
+		return nil, err
+	}
+	response := newTransaction.ToTransactionDTO()
+	return &response, nil
 
 }
 

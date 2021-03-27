@@ -20,7 +20,12 @@ func (a Account) ToNewAccountDTO() dto.NewAccountResponse {
 	}
 }
 
+func (a Account) CanWithdraw(amount float64) bool {
+	return a.Amount > amount
+}
+
 // CustomerRepository interface
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
+	FindByID(string) (*Account, *errs.AppError)
 }
