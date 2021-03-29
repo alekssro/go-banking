@@ -19,10 +19,10 @@ jobs:
         go-version: 1.15
 
     - name: Build
-      run: go build -v ./main.go
+      run: go build -v ./cmd/banking/main.go
       
-    - name: Run main.go
-      run: timeout 5 go run ./main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+    - name: Run cmd/banking/main.go
+      run: timeout 5 go run ./cmd/banking/main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
 
     # - name: Test
     #   run: go test -v ./...
