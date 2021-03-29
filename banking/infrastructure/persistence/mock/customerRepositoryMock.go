@@ -1,4 +1,4 @@
-package domain
+package persistance
 
 import "github.com/alekssro/banking/banking/domain/entity"
 

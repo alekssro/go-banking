@@ -39,3 +39,9 @@ func (s DefaultAccountService) CreateAccount(req dto.NewAccountRequest) (*dto.Ne
 func NewAccountService(repo repository.AccountRepository) DefaultAccountService {
 	return DefaultAccountService{repo}
 }
+
+func presentNewAccountDTO(a entity.Account) dto.NewAccountResponse {
+	return dto.NewAccountResponse{
+		AccountId: a.AccountId,
+	}
+}

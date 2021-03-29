@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"github.com/alekssro/banking/dto"
-	"github.com/alekssro/banking/errs"
+	"github.com/alekssro/banking/banking/shared/dto"
+	"github.com/alekssro/banking/banking/shared/errs"
 )
 
 // Transaction struct defines the domain transaction entity
