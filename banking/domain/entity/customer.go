@@ -1,10 +1,5 @@
 package entity
 
-import (
-	"github.com/alekssro/banking/banking/shared/dto"
-	"github.com/alekssro/banking/banking/shared/errs"
-)
-
 // Customer struct defines the customer
 type Customer struct {
 	ID          string `db:"customer_id"`
@@ -15,7 +10,7 @@ type Customer struct {
 	Status      string
 }
 
-func (c Customer) statusAsText() string {
+func (c Customer) StatusAsText() string {
 	var statusAsText string
 	if c.Status == "0" {
 		statusAsText = "inactive"
@@ -23,22 +18,4 @@ func (c Customer) statusAsText() string {
 		statusAsText = "active"
 	}
 	return statusAsText
-}
-
-func (c Customer) ToDTO() dto.CustomerResponse {
-	return dto.CustomerResponse{
-		ID:          c.ID,
-		Name:        c.Name,
-		City:        c.City,
-		Zipcode:     c.Zipcode,
-		DateofBirth: c.DateofBirth,
-		Status:      c.statusAsText(),
-	}
-}
-
-// CustomerRepository interface
-type CustomerRepository interface {
-	FindAll() ([]Customer, *errs.AppError)
-	FindByStatus(string) ([]Customer, *errs.AppError)
-	ByID(string) (*Customer, *errs.AppError)
 }

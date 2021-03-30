@@ -17,3 +17,8 @@ type AccountService interface {
 type DefaultAccountService struct {
 	repo repository.AccountRepository
 }
+
+// NewAccountService func adds a new default account service
+func NewAccountService(repo repository.AccountRepository) DefaultAccountService {
+	return DefaultAccountService{repo}
+}

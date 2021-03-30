@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/alekssro/banking/banking/domain/entity"
-	"github.com/alekssro/banking/banking/domain/repository"
 	"github.com/alekssro/banking/banking/shared/dto"
 	"github.com/alekssro/banking/banking/shared/errs"
 )
@@ -30,17 +29,12 @@ func (s DefaultAccountService) CreateAccount(req dto.NewAccountRequest) (*dto.Ne
 	if err != nil {
 		return nil, err
 	}
-	response := presentNewAccountDTO(*newAccount)
+	response := toNewAccountDTO(*newAccount)
 
 	return &response, nil
 }
 
-// NewAccountService func adds a new default account service
-func NewAccountService(repo repository.AccountRepository) DefaultAccountService {
-	return DefaultAccountService{repo}
-}
-
-func presentNewAccountDTO(a entity.Account) dto.NewAccountResponse {
+func toNewAccountDTO(a entity.Account) dto.NewAccountResponse {
 	return dto.NewAccountResponse{
 		AccountId: a.AccountId,
 	}
