@@ -1,19 +1,19 @@
-package app
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/alekssro/banking/dto"
-	"github.com/alekssro/banking/logger"
-	"github.com/alekssro/banking/service"
+	"github.com/alekssro/banking/banking/application"
+	"github.com/alekssro/banking/banking/shared/dto"
+	"github.com/alekssro/banking/banking/shared/logger"
 	"github.com/gorilla/mux"
 )
 
 // TransactionHandler struct defines the Transaction handler
 // which depends on the service.TransactionService
 type TransactionHandler struct {
-	service service.TransactionService
+	service application.TransactionService
 }
 
 func (th *TransactionHandler) newTransaction(w http.ResponseWriter, r *http.Request) {
@@ -26,16 +26,16 @@ func (th *TransactionHandler) newTransaction(w http.ResponseWriter, r *http.Requ
 	var request dto.NewTransactionRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		writeResponse(w, http.StatusBadRequest, err.Error())
+		WriteResponse(w, http.StatusBadRequest, err.Error())
 	} else {
 		request.CustomerId = customerID
 		request.AccountID = accountID
 		Transaction, appErr := th.service.NewTransaction(request)
 		if appErr != nil {
-			writeResponse(w, appErr.Code, appErr.Message)
+			WriteResponse(w, appErr.Code, appErr.Message)
 		} else {
 			logger.Info("New transaction: id=" + Transaction.TransactionId)
-			writeResponse(w, http.StatusCreated, Transaction)
+			WriteResponse(w, http.StatusCreated, Transaction)
 		}
 	}
 }

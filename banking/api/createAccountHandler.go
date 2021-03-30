@@ -1,19 +1,19 @@
-package app
+package api
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/alekssro/banking/dto"
-	"github.com/alekssro/banking/logger"
-	"github.com/alekssro/banking/service"
+	"github.com/alekssro/banking/banking/application"
+	"github.com/alekssro/banking/banking/shared/dto"
+	"github.com/alekssro/banking/banking/shared/logger"
 	"github.com/gorilla/mux"
 )
 
 // AccountHandler struct defines the account handler
-// which depends on the service.AccountService
+// which depends on the application.AccountService
 type AccountHandler struct {
-	service service.AccountService
+	service application.AccountService
 }
 
 func (ah *AccountHandler) createAccount(w http.ResponseWriter, r *http.Request) {
@@ -23,15 +23,15 @@ func (ah *AccountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 	var request dto.NewAccountRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		writeResponse(w, http.StatusBadRequest, err.Error())
+		WriteResponse(w, http.StatusBadRequest, err.Error())
 	} else {
 		request.CustomerId = customerID
-		account, appErr := ah.service.NewAccount(request)
+		account, appErr := ah.service.CreateAccount(request)
 		if appErr != nil {
-			writeResponse(w, appErr.Code, appErr.Message)
+			WriteResponse(w, appErr.Code, appErr.Message)
 		} else {
 			logger.Info("New created account: id=" + account.AccountId)
-			writeResponse(w, http.StatusCreated, account)
+			WriteResponse(w, http.StatusCreated, account)
 		}
 	}
 }

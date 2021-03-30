@@ -1,11 +1,12 @@
-package domain
+package db
 
 import (
 	"database/sql"
 	"strconv"
 
-	"github.com/alekssro/banking/errs"
-	"github.com/alekssro/banking/logger"
+	"github.com/alekssro/banking/banking/domain/entity"
+	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/banking/shared/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -18,7 +19,7 @@ type TransactionRepositoryDB struct {
 // Transaction method implements a TransactionRepository interface for
 // TransactionRepositoryDB struct. Returns all the customers
 // in TransactionRepositoryDB
-func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.AppError) {
+func (d TransactionRepositoryDB) Withdrawal(t entity.Transaction) (*entity.Transaction, *errs.AppError) {
 
 	tx, err := d.client.Begin()
 	if err != nil {
@@ -26,7 +27,7 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
 
-	var a Account
+	var a entity.Account
 
 	// 1. Check if available amount in account
 	accountAmountQuery := "SELECT amount FROM accounts WHERE account_id = ?"
@@ -70,14 +71,14 @@ func (d TransactionRepositoryDB) Withdrawal(t Transaction) (*Transaction, *errs.
 // Transaction method implements a TransactionRepository interface for
 // TransactionRepositoryDB struct. Returns all the customers
 // in TransactionRepositoryDB
-func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.AppError) {
+func (d TransactionRepositoryDB) Deposit(t entity.Transaction) (*entity.Transaction, *errs.AppError) {
 
 	tx, err := d.client.Begin()
 	if err != nil {
 		logger.Error("Error while starting a new transaction block: " + err.Error())
 		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
-	var a Account
+	var a entity.Transaction
 
 	// 1. Get amount in account
 	accountAmountQuery := "SELECT amount FROM accounts WHERE account_id = ?"
@@ -115,7 +116,7 @@ func (d TransactionRepositoryDB) Deposit(t Transaction) (*Transaction, *errs.App
 	return &t, nil
 }
 
-func insertTransaction(tx *sql.Tx, t Transaction) (int64, *errs.AppError) {
+func insertTransaction(tx *sql.Tx, t entity.Transaction) (int64, *errs.AppError) {
 	insertTransactionQuery := "INSERT INTO transactions (account_id, amount, transaction_type, transaction_date) VALUES (?, ?, ?, ?)"
 	res, err := tx.Exec(insertTransactionQuery, t.AccountID, t.Amount, t.TransactionType, t.TransactionDate)
 	if err != nil {

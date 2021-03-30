@@ -1,23 +1,10 @@
-package service
+package application
 
 import (
-	"github.com/alekssro/banking/domain"
-	"github.com/alekssro/banking/dto"
-	"github.com/alekssro/banking/errs"
+	"github.com/alekssro/banking/banking/domain/entity"
+	"github.com/alekssro/banking/banking/shared/dto"
+	"github.com/alekssro/banking/banking/shared/errs"
 )
-
-// CustomerService defines a CustomerService interface
-type CustomerService interface {
-	GetAllCustomers() ([]dto.CustomerResponse, *errs.AppError)
-	GetAllByStatus(string) ([]dto.CustomerResponse, *errs.AppError)
-	GetCustomer(string) (*dto.CustomerResponse, *errs.AppError)
-}
-
-// DefaultCustomerService struct defines the default customer service
-// which depends on domain.CustomerRepository
-type DefaultCustomerService struct {
-	repo domain.CustomerRepository
-}
 
 // GetAllCustomers method implements the CustomerService interface for
 // DefaultCustomerService struct
@@ -29,7 +16,7 @@ func (s DefaultCustomerService) GetAllCustomers() ([]dto.CustomerResponse, *errs
 
 	response := []dto.CustomerResponse{}
 	for _, c := range cs {
-		response = append(response, c.ToDTO())
+		response = append(response, toCustomerResponseDTO(c))
 	}
 
 	return response, nil
@@ -52,7 +39,7 @@ func (s DefaultCustomerService) GetAllByStatus(status string) ([]dto.CustomerRes
 
 	response := []dto.CustomerResponse{}
 	for _, c := range cs {
-		response = append(response, c.ToDTO())
+		response = append(response, toCustomerResponseDTO(c))
 	}
 
 	return response, nil
@@ -66,12 +53,18 @@ func (s DefaultCustomerService) GetCustomer(id string) (*dto.CustomerResponse, *
 		return nil, err
 	}
 
-	response := c.ToDTO()
+	response := toCustomerResponseDTO(*c)
 
 	return &response, nil
 }
 
-// NewCustomerService func adds a new default customer service
-func NewCustomerService(repo domain.CustomerRepository) DefaultCustomerService {
-	return DefaultCustomerService{repo}
+func toCustomerResponseDTO(c entity.Customer) dto.CustomerResponse {
+	return dto.CustomerResponse{
+		ID:          c.ID,
+		Name:        c.Name,
+		City:        c.City,
+		Zipcode:     c.Zipcode,
+		DateofBirth: c.DateofBirth,
+		Status:      c.StatusAsText(),
+	}
 }

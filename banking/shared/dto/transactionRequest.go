@@ -3,8 +3,8 @@ package dto
 import (
 	"fmt"
 
-	"github.com/alekssro/banking/errs"
-	"github.com/alekssro/banking/logger"
+	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/banking/shared/logger"
 )
 
 // Transaction struct defines the Transaction for API response

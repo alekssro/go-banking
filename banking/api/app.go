@@ -1,4 +1,4 @@
-package app
+package api
 
 import (
 	"fmt"
@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/alekssro/banking/domain"
-	"github.com/alekssro/banking/logger"
-	"github.com/alekssro/banking/service"
+	"github.com/alekssro/banking/banking/application"
+	"github.com/alekssro/banking/banking/infrastructure/persistence/db"
+	"github.com/alekssro/banking/banking/shared/logger"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
@@ -36,13 +36,14 @@ func Start() {
 
 	// wiring
 	dbClient := getDBclient()
-	customerRepositoryDB := domain.NewCustomerRepositoryDB(dbClient)
-	accountRepositoryDB := domain.NewAccountRepositoryDB(dbClient)
-	transactionRepositoryDB := domain.NewTransactionRepositoryDB(dbClient)
 
-	ch := CustomerHandler{service.NewCustomerService(customerRepositoryDB)}
-	ah := AccountHandler{service.NewAccountService(accountRepositoryDB)}
-	th := TransactionHandler{service.NewTransactionService(transactionRepositoryDB)}
+	customerRepositoryDB := db.NewCustomerRepositoryDB(dbClient)
+	accountRepositoryDB := db.NewAccountRepositoryDB(dbClient)
+	transactionRepositoryDB := db.NewTransactionRepositoryDB(dbClient)
+
+	ch := CustomerHandler{application.NewCustomerService(customerRepositoryDB)}
+	ah := AccountHandler{application.NewAccountService(accountRepositoryDB)}
+	th := TransactionHandler{application.NewTransactionService(transactionRepositoryDB)}
 
 	// define routes
 	router.HandleFunc("/customers", ch.queryCustomers).Methods(http.MethodGet)

@@ -3,7 +3,7 @@ package dto
 import (
 	"strings"
 
-	"github.com/alekssro/banking/errs"
+	"github.com/alekssro/banking/banking/shared/errs"
 )
 
 // Account struct defines the account for API response

@@ -1,10 +1,11 @@
-package domain
+package db
 
 import (
 	"strconv"
 
-	"github.com/alekssro/banking/errs"
-	"github.com/alekssro/banking/logger"
+	"github.com/alekssro/banking/banking/domain/entity"
+	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/banking/shared/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -17,7 +18,7 @@ type AccountRepositoryDB struct {
 // FindAll method implements a AccountRepository interface for
 // AccountRepositoryDB struct. Returns all the customers
 // in AccountRepositoryDB
-func (d AccountRepositoryDB) Save(a Account) (*Account, *errs.AppError) {
+func (d AccountRepositoryDB) Save(a entity.Account) (*entity.Account, *errs.AppError) {
 
 	sqlInsertQuery := "INSERT INTO accounts (customer_id, opening_date, account_type, amount, status) VALUES (?, ?, ?, ?, ?)"
 
@@ -37,18 +38,17 @@ func (d AccountRepositoryDB) Save(a Account) (*Account, *errs.AppError) {
 	return &a, nil
 }
 
-func (d AccountRepositoryDB) FindByID(accountID string) (*Account, *errs.AppError) {
+func (d AccountRepositoryDB) FindByID(accountID string) (*entity.Account, *errs.AppError) {
 	// Check if available amount in account
 	accountQuery := "SELECT account_id, customer_id, opening_date, account_type, amount, status FROM customers WHERE customer_id = ?"
 
-	var a Account
+	var a entity.Account
 	// Query by id + Marshall into c
 	err := d.client.Get(&a, accountQuery, accountID)
 	if err != nil {
 		logger.Error("Error while querying customer by id in DB. " + err.Error())
 		return nil, errs.NewUnexpectedError("Unexpected database error")
 	}
-
 	return &a, nil
 }
 

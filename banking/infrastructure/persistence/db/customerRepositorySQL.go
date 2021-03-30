@@ -1,8 +1,9 @@
-package domain
+package db
 
 import (
-	"github.com/alekssro/banking/errs"
-	"github.com/alekssro/banking/logger"
+	"github.com/alekssro/banking/banking/domain/entity"
+	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/banking/shared/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -16,11 +17,11 @@ type CustomerRepositoryDB struct {
 // FindAll method implements a CustomRepository interface for
 // CustomerRepositoryDB struct. Returns all the customers
 // in CustomerRepositoryDB
-func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
+func (d CustomerRepositoryDB) FindAll() ([]entity.Customer, *errs.AppError) {
 
 	findAllQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers"
 
-	var customers []Customer
+	var customers []entity.Customer
 	// Query + Marshall into customers
 	err := d.client.Select(&customers, findAllQuery)
 	if err != nil {
@@ -33,7 +34,7 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, *errs.AppError) {
 
 // FindByStatus method implements finding all the customers with a given status
 // for the CustomerRepositoryDB
-func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.AppError) {
+func (d CustomerRepositoryDB) FindByStatus(status string) ([]entity.Customer, *errs.AppError) {
 
 	findByStatusQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers where status = ?"
 
@@ -42,7 +43,7 @@ func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.App
 		return nil, errs.NewBadRequestError("malformed query, status=" + status)
 	}
 
-	var customers []Customer
+	var customers []entity.Customer
 	// Query by condition + Marshall into customers
 	err := d.client.Select(&customers, findByStatusQuery, status)
 	if err != nil {
@@ -55,11 +56,11 @@ func (d CustomerRepositoryDB) FindByStatus(status string) ([]Customer, *errs.App
 
 // ByID method implements CustomRepository interface for CustomerRepositoryDB
 // struct. Returns a Customer given an ID.
-func (d CustomerRepositoryDB) ByID(id string) (*Customer, *errs.AppError) {
+func (d CustomerRepositoryDB) ByID(id string) (*entity.Customer, *errs.AppError) {
 
 	customerQuery := "select customer_id, name, date_of_birth, city, zipcode, status from customers where customer_id = ?"
 
-	var c Customer
+	var c entity.Customer
 	// Query by id + Marshall into c
 	err := d.client.Get(&c, customerQuery, id)
 	if err != nil {
