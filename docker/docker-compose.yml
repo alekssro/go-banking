@@ -27,7 +27,7 @@ services:
     #   # - /var/run/docker.sock:/var/run/docker.sock 
     container_name: banking-server
     environment:
-      BANKING_HOST: localhost
+      BANKING_HOST: 0.0.0.0
       BANKING_PORT: 8765
       DB_HOST: mysql
       DB_PORT: 3306

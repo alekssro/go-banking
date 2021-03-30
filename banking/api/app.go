@@ -17,7 +17,7 @@ import (
 func sanityCheck() {
 	if os.Getenv("BANKING_HOST") == "" {
 		logger.Warn("BANKING_HOST not defined, using default")
-		os.Setenv("BANKING_HOST", "localhost")
+		os.Setenv("BANKING_HOST", "0.0.0.0")
 	}
 	if os.Getenv("BANKING_PORT") == "" {
 		logger.Warn("BANKING_PORT not defined, using default")
