@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  banking-server:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,6 +23,25 @@ jobs:
       
     - name: Run server
       run: timeout 5 go run ./cmd/server/main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+
+    # - name: Test
+    #   run: go test -v ./...
+  
+  banking-auth:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Build server
+      run: go build -v ./cmd/auth/main.go
+      
+    - name: Run server
+      run: timeout 5 go run ./cmd/auth/main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
 
     # - name: Test
     #   run: go test -v ./...
