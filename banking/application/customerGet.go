@@ -2,8 +2,8 @@ package application
 
 import (
 	"github.com/alekssro/banking/banking/domain/entity"
-	"github.com/alekssro/banking/banking/shared/dto"
-	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/lib/dto"
+	"github.com/alekssro/banking/lib/errs"
 )
 
 // GetAllCustomers method implements the CustomerService interface for

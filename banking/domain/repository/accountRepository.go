@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/alekssro/banking/banking/domain/entity"
-	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/lib/errs"
 )
 
 // CustomerRepository interface
