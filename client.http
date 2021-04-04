@@ -1,6 +1,3 @@
-GET http://localhost:3000/greet
-
-###
 
 GET http://localhost:3000/customers
 content-type: application/json
@@ -8,11 +5,11 @@ content-type: application/json
 ###
 
 # Not in DB
-GET http://localhost:3000/customers/1002
+GET http://localhost:3000/customers/1001
 
 ###
 
-GET http://localhost:3000/customers/2005
+GET http://localhost:3000/customers/2001
 
 ###
 
@@ -25,3 +22,33 @@ GET http://localhost:3000/customers?status=inactive
 ###
 
 GET http://localhost:3000/customers?status=13edrws
+
+###
+
+POST http://localhost:3000/customers/2001/account
+content-type: application/json
+
+{
+    "account_type": "checking",
+    "amount": 5000.2
+}
+
+###
+
+POST http://localhost:3000/customers/2001/account/95473
+content-type: application/json
+
+{
+    "transaction_type": "deposit",
+    "amount": 1000
+}
+
+###
+
+POST http://localhost:3000/customers/2001/account/95473
+content-type: application/json
+
+{
+    "transaction_type": "withdrawal",
+    "amount": 1000
+}
