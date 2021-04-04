@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	k
 	logger.Info("Banking server listening...")
 	api.Start()
 }
