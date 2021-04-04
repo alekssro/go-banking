@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/alekssro/banking/banking/application"
-	"github.com/alekssro/banking/banking/shared/dto"
-	"github.com/alekssro/banking/banking/shared/logger"
+	"github.com/alekssro/banking/lib/dto"
+	"github.com/alekssro/banking/lib/logger"
 	"github.com/gorilla/mux"
 )
 

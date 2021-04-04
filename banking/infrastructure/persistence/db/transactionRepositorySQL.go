@@ -5,9 +5,8 @@ import (
 	"strconv"
 
 	"github.com/alekssro/banking/banking/domain/entity"
-	"github.com/alekssro/banking/banking/shared/errs"
-	"github.com/alekssro/banking/banking/shared/logger"
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/alekssro/banking/lib/errs"
+	"github.com/alekssro/banking/lib/logger"
 	"github.com/jmoiron/sqlx"
 )
 

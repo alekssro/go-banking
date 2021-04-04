@@ -9,7 +9,7 @@ import (
 
 	"github.com/alekssro/banking/banking/application"
 	"github.com/alekssro/banking/banking/infrastructure/persistence/db"
-	"github.com/alekssro/banking/banking/shared/logger"
+	"github.com/alekssro/banking/lib/logger"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )

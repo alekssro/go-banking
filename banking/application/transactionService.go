@@ -2,8 +2,8 @@ package application
 
 import (
 	"github.com/alekssro/banking/banking/domain/repository"
-	"github.com/alekssro/banking/banking/shared/dto"
-	"github.com/alekssro/banking/banking/shared/errs"
+	"github.com/alekssro/banking/lib/dto"
+	"github.com/alekssro/banking/lib/errs"
 )
 
 // TransactionService defines a TransactionService interface
