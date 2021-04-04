@@ -10,6 +10,7 @@ import (
 	"github.com/alekssro/banking/banking/application"
 	"github.com/alekssro/banking/banking/infrastructure/persistence/db"
 	"github.com/alekssro/banking/lib/logger"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )

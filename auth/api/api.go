@@ -11,6 +11,7 @@ import (
 	"github.com/alekssro/banking/auth/domain/entity"
 	"github.com/alekssro/banking/auth/domain/repository"
 	"github.com/alekssro/banking/lib/logger"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 )
@@ -54,12 +55,12 @@ func getDbClient() *sqlx.DB {
 
 func sanityCheck() {
 	envProps := []string{
-		"SERVER_ADDRESS",
-		"SERVER_PORT",
-		"DB_USER",
-		"DB_PASSWD",
-		"DB_ADDR",
+		"AUTH_HOST",
+		"AUTH_PORT",
+		"DB_HOST",
 		"DB_PORT",
+		"DB_USER",
+		"DB_PASS",
 		"DB_NAME",
 	}
 	for _, k := range envProps {

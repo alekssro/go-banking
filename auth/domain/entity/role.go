@@ -1,8 +1,6 @@
 package entity
 
-import (
-	"strings"
-)
+import "strings"
 
 type RolePermissions struct {
 	rolePermissions map[string][]string
