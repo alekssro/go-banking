@@ -23,6 +23,14 @@ jobs:
       
     - name: Run server
       run: timeout 5 go run ./cmd/server/main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+      env:
+        BANKING_HOST: 0.0.0.0
+        BANKING_PORT: 8765
+        DB_HOST: mysql
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASS: codecamp
+        DB_NAME: banking
 
     # - name: Test
     #   run: go test -v ./...
@@ -42,6 +50,14 @@ jobs:
       
     - name: Run server
       run: timeout 5 go run ./cmd/auth/main.go || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+      env:
+        AUTH_HOST: 0.0.0.0
+        AUTH_PORT: 8181
+        DB_HOST: mysql
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASS: codecamp
+        DB_NAME: banking
 
     # - name: Test
     #   run: go test -v ./...
