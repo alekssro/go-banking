@@ -52,3 +52,46 @@ content-type: application/json
     "transaction_type": "withdrawal",
     "amount": 1000
 }
+
+###
+
+POST http://localhost:8181/auth/login
+content-type: application/json
+
+{
+    "username": "admin",
+    "password": "abc123"
+}
+
+###
+
+GET http://localhost:3000/customers
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6IiIsImFjY291bnRzIjpudWxsLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNjE3NjY2NDc0fQ.M40vb3ldOY8PNoxjrNBZfYjA0NvWHo61seqCWnAJ7Z4
+
+###
+
+POST http://localhost:8181/auth/login
+content-type: application/json
+
+{
+    "username": "2001",
+    "password": "abc123"
+}
+
+###
+
+# Unauthorized (user token)
+GET http://localhost:3000/customers
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6IjIwMDEiLCJhY2NvdW50cyI6WyI5NTQ3MiIsIjk1NDczIl0sInVzZXJuYW1lIjoiMjAwMSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNjE3NjY2NzE1fQ.oCdfq6Y9QjZFV7JDiUpwQHrwI2h7og7aLewuBVeZwoU
+
+###
+
+GET http://localhost:3000/customers/2002
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0b21lcl9pZCI6IjIwMDEiLCJhY2NvdW50cyI6WyI5NTQ3MiIsIjk1NDczIl0sInVzZXJuYW1lIjoiMjAwMSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNjE3NjY2NzE1fQ.oCdfq6Y9QjZFV7JDiUpwQHrwI2h7og7aLewuBVeZwoU
+
+###
+
+

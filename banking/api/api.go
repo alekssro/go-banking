@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/alekssro/banking/banking/application"
+	"github.com/alekssro/banking/banking/domain/repository"
 	"github.com/alekssro/banking/banking/infrastructure/persistence/db"
 	"github.com/alekssro/banking/lib/logger"
 	_ "github.com/go-sql-driver/mysql"
@@ -47,10 +48,27 @@ func Start() {
 	th := TransactionHandler{application.NewTransactionService(transactionRepositoryDB)}
 
 	// define routes
-	router.HandleFunc("/customers", ch.queryCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.createAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", th.newTransaction).Methods(http.MethodPost)
+	// define routes
+	router.
+		HandleFunc("/customers", ch.queryCustomers).
+		Methods(http.MethodGet).
+		Name("GetAllCustomers")
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).
+		Methods(http.MethodGet).
+		Name("GetCustomer")
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.createAccount).
+		Methods(http.MethodPost).
+		Name("NewAccount")
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", th.newTransaction).
+		Methods(http.MethodPost).
+		Name("NewTransaction")
+
+	// authentication middleware layer
+	am := AuthMiddleware{repository.NewAuthRepository()}
+	router.Use(am.authorizationHandler())
 
 	// starting server
 	host := os.Getenv("BANKING_HOST")
